@@ -35,4 +35,22 @@ router.post('/', (req,res) => {
   })
 });
 
+router.post('/create-user', (req, res)=>{
+    /*********** */
+    const sql = 'INSERT INTO LOGIN SET ?'
+    /*********** */
+    const solicitudObj = {
+        user: req.body.user,
+        password: req.body.password
+    }
+    /********* */
+
+    conectBD.query(sql, solicitudObj,(err, result)=>{
+        if(err) throw err
+        res.send("Agregado con exito!!")
+
+    })
+    /*************************** */
+});
+
 export default router
