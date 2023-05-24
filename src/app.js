@@ -1,6 +1,7 @@
 import express from "express";
 import login from "./route/login.js";
-import posts from "./route/posts.js"
+import posts from "./route/posts.js";
+import comentarios from "./route/comentarios.js";
 const app = express();
 app.use(express.json());
 const PORT = process.env.PORT || 3001; // VARIABLE DE ENTORNO  PARA EL PUERTO.
@@ -15,7 +16,7 @@ app.use((req, res, next) => {
 
 app.use('/login', login);
 app.use('/posts', posts);
-
+app.use('/comentarios', comentarios);
 
 app.listen(PORT);
 console.log("Puerto corriendo en" , PORT)
