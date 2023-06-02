@@ -1,11 +1,9 @@
 const express = require("express");
 const mysql = require("mysql");
-// import { BD_HOST,BD_NAME,BD_PASSWORD,BD_PORT,BD_USER } from "../db/db.js";
-// import { Router } from "express";
 const router = express.Router();
 const BD = require("../db/db.js");
 express().use(express.json());
-// const router = Router();
+
 
 const conectBD = mysql.createConnection({
     host: BD.BD_HOST,
