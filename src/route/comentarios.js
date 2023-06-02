@@ -1,23 +1,27 @@
-import express from "express";
-import mysql from "mysql";
-import { BD_HOST,BD_NAME,BD_PASSWORD,BD_PORT,BD_USER } from "../db/db.js";
-import { Router } from "express";
+const express = require("express");
+const mysql =  require("mysql");
+// import { BD_HOST,BD_NAME,BD_PASSWORD,BD_PORT,BD_USER } from "../db/db.js";
+// import { Router } from "express";
+const router = express.Router();
+const BD = require("../db/db.js");
 express().use(express.json());
-const router = Router();
+// const router = Router();
 
 const conectBD = mysql.createConnection({
-    host: BD_HOST,
-    user: BD_USER,
-    password: BD_PASSWORD,
-    database: BD_NAME
+    host: BD.BD_HOST,
+    user: BD.BD_USER,
+    password: BD.BD_PASSWORD,
+    database: BD.BD_NAME
 });
 
 
 
-router.post('/crear-comentario', (req, res)=>{
+router.post('/:postId/comentarios', (req, res)=>{
      const sql = 'INSERT INTO comentarios SET ?'
+     const postId = req.params.postId;
      const solicitudObj = {
-        contenido: req.body.contenido,
+        post_id: postId,
+        contenido_comentario: req.body.contenido,
         fecha_publicacion: req.body.fecha_publicacion,
         usuario_comentario: req.body.usuario_comentario
      }
@@ -43,4 +47,4 @@ router.get('/cargar-comentarios', (req, res)=>{
     })
 });
 
-export default router
+module.exports = router;
