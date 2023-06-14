@@ -4,6 +4,11 @@ const app = express();
 app.use(express.json());
 const PORT = process.env.PORT || 3001; // VARIABLE DE ENTORNO  PARA EL PUERTO.
 
+app.use(session({
+  secret: 'secretoid', 
+  resave: false,
+  saveUninitialized: true
+}));
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Headers', 'Authorization, X-API-KEY, Origin, X-Requested-With, Content-Type, Accept, Access-Control-Allow-Request-Method');
@@ -12,11 +17,6 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use(session({
-  secret: 'secretoid', 
-  resave: false,
-  saveUninitialized: true
-}));
 
 const login = require("./route/login.js");
 const posts = require("./route/posts.js");

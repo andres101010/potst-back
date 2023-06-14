@@ -14,7 +14,7 @@ const conectBD = mysql.createConnection({
 
 
 
-router.post('/:postId/comentarios', (req, res)=>{
+router.post('/:postId', (req, res)=>{
      const sql = 'INSERT INTO comentarios SET ?'
      const postId = req.params.postId;
      const solicitudObj = {
@@ -30,19 +30,6 @@ router.post('/:postId/comentarios', (req, res)=>{
      })
 });
 
-router.get('/cargar-comentarios', (req, res)=>{
-    const sql = 'SELECT * FROM comentarios'
 
-
-    conectBD.query(sql, (error, result)=>{
-    if(error){
-        res.status(500).res.send(error)
-    }else if(result.length > 0){
-        res.status(200).send(result)
-    }else{
-        res.status(500).send("No hay datos disponibles")
-    }
-    })
-});
 
 module.exports = router;

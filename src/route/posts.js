@@ -15,7 +15,9 @@ const conectBD = mysql.createConnection({
 
 
 router.get('/', (req, res)=>{
-    res.send("Bienvenido a posts")
+    res.send("bienvenido a posts")
+    userId = req.session.userId
+    console.log(userId, "de posts")
 });
 
 router.post('/crear-post', (req, res)=>{
@@ -34,7 +36,8 @@ conectBD.query(sql,solicitudObj,(err, result)=>{
 });
 
 router.get('/cargar-post', (req, res)=>{
-    const sql = 'SELECT * FROM posts ';
+    // const sql = 'SELECT * FROM posts LEFT JOIN comentarios ON posts.idposts = comentarios.idposts';
+    const sql = 'SELECT * FROM posteos.posts '
     conectBD.query(sql, (err, result)=>{
         if(err){
             res.status(500).send(err)
@@ -45,5 +48,17 @@ router.get('/cargar-post', (req, res)=>{
         }
     })
 });
+
+router.get('/cargar-post/:idposts', (req, res) => {
+    const idposts = req.params.idposts;
+    const sql = `SELECT * FROM posteos.posts 
+    LEFT JOIN  posteos.comentarios  ON posts.idposts = comentarios.id_posts
+    LEFT JOIN posteos.archivos on comentarios.id_posts = archivos.id_comentarios WHERE idposts = '${idposts}'`;
+    conectBD.query(sql, (err, results) => {
+        if (err) throw err;
+        res.send(results)
+    }) 
+})
+
 
 module.exports = router;
