@@ -11,8 +11,20 @@ const conectBD = mysql.createConnection({
 
 const cargarComentarioById = (req,res) => {
  const idposts = req.params.idposts;
- const sql = `SELECT * FROM comentarios WHERE id_posts = ${idposts}`;
- conectBD.query(sql,(err,result) => {
+ const sql = `SELECT c.idcomentarios,
+ c.contenido_comentario,
+ c.fecha_publicacion_comentarios,
+ c.usuario_comentario,
+ IFNULL(s.idsubComentario, '') AS idsubComentario,
+ IFNULL(s.contenido_subComentario, '') AS contenido_subComentario,
+ IFNULL(s.fecha_subComentario, '') AS fecha_subComentario,
+ IFNULL(s.usuario_subComentario, '') AS usuario_subComentario
+ FROM posteos.comentarios c
+ LEFT JOIN subcomentario s ON c.idcomentarios = s.idcomentariopadre 
+ WHERE id_posts = ${idposts}`;
+
+//  const sql = `SELECT * from comentarios WHERE id_posts = ${idposts}`
+conectBD.query(sql,(err,result) => {
     if (err) throw(err);
     res.send(result)
  })

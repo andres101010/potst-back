@@ -9,20 +9,34 @@ const conectBD = mysql.createConnection({
     database: BD.BD_NAME
 });
 
+const cargarSubComentariosById = (req,res) => {
+    const idcomentarios = req.params.idcomentarios;
+    const sql = `SELECT * FROM subcomentario WHERE idcomentariopadre = ${idcomentarios}`;
+    conectBD.query(sql, (err, result) => {
+        if (err) throw err
+        res.send(result)
+    })
+}
+
 const sendSubComentario = (req, res) => {
     const idcomentarios = req.params.idcomentarios;
-    const sql = `INSERT INTO subcomentarios `
-    const obj = { contenido_subComentario: req.body.contenidoSubComentario,
-                  fecha_subComentario: req.body.fechaSubComentario,
-                  usuario_subComentario:req.body.usuarioSubComentario,
-                  idcomentariopadre: idcomentarios};
-    conectBD.query(sql, obj,  (err, res) => {
+    const sql = `INSERT INTO subcomentario SET ?`
+    const objSubComentario = {
+         contenido_subComentario: req.body.contenidoSubComentario,
+         fecha_subComentario: req.body.fechaSubComentario,
+         usuario_subComentario:req.body.usuarioSubComentario,
+         idcomentariopadre: idcomentarios }
+
+    conectBD.query(sql, objSubComentario,  (err, result) => {
         if (err){
-            res.send(err);
-            res.send("Respuesta mandada con exito!!!")
+            throw err
+        }else{
+            res.send("Respuesta agregada con exito!!!")
+            console.log(objSubComentario)
         }
     })
 };
  module.exports ={
-    sendSubComentario
+    sendSubComentario,
+    cargarSubComentariosById
  }

@@ -24,12 +24,80 @@ const cargarPosts = (req,res) => {
 };
 
 const cargarPostsById = (req,res) => {
+    
     const idposts = req.params.idposts;
-    const sql = `SELECT * FROM posts WHERE idposts = '${idposts}'`
+
+
+    // const sql = `SELECT  p.idposts, p.titulo, p.contenido_posts, p.fecha_publicacion, p.user_posts,
+    // IFNULL(c.idcomentarios, '') AS idcomentarios,
+    // IFNULL(c.contenido_comentario, '') AS contenido_comentario,
+    // IFNULL(c.fecha_publicacion_comentarios, '') AS fecha_publicacion_comentarios,
+    // IFNULL(c.usuario_comentario, '') AS usuario_comentario,
+    // IFNULL(s.idsubComentario, '') AS idsubcomentario,
+    // IFNULL(s.contenido_subComentario, '') AS contenido_subComentario,
+    // IFNULL(s.fecha_subComentario, '') AS fecha_subComentario,
+    // IFNULL(s.usuario_subComentario, '') AS usuario_subComentario,
+    // IFNULL(a.idarchivos, '') AS idarchivos,
+    // IFNULL(a.nombre, '') AS nombre,
+    // IFNULL(a.datos, '') AS datos
+    // FROM posteos.posts p
+    // LEFT JOIN comentarios c ON c.id_posts = p.idposts 
+    // LEFT JOIN subcomentario s ON s.idcomentariopadre = c.idcomentarios 
+    // LEFT JOIN archivos a ON a.idposteo = p.idposts
+    // WHERE p.idposts = ${idposts}
+    // `
+    const sql = `
+SELECT
+    p.idposts,
+    p.titulo,
+    p.contenido_posts,
+    p.fecha_publicacion,
+    p.user_posts,
+    (
+        SELECT JSON_ARRAYAGG(
+            JSON_OBJECT(
+                'idcomentarios', c.idcomentarios,
+                'contenido_comentario', c.contenido_comentario,
+                'fecha_publicacion_comentarios', c.fecha_publicacion_comentarios,
+                'usuario_comentario', c.usuario_comentario,
+                'subcomentarios', (
+                    SELECT JSON_ARRAYAGG(
+                        JSON_OBJECT(
+                            'idsubComentario', s.idsubComentario,
+                            'contenido_subComentario', s.contenido_subComentario,
+                            'fecha_subComentario', s.fecha_subComentario,
+                            'usuario_subComentario', s.usuario_subComentario
+                        )
+                    )
+                    FROM subcomentario s
+                    WHERE s.idcomentariopadre = c.idcomentarios
+                )
+            )
+        )
+        FROM comentarios c
+        WHERE c.id_posts = p.idposts
+    ) AS comentarios,
+    (
+        SELECT JSON_ARRAYAGG(
+            JSON_OBJECT(
+                'idarchivos', a.idarchivos,
+                'nombre', a.nombre,
+                'datos', a.datos
+            )
+        )
+        FROM archivos a
+        WHERE a.idposteo = p.idposts
+    ) AS archivos
+FROM
+    posteos.posts p
+WHERE
+    p.idposts = ${idposts}
+`;
     conectBD.query(sql, (err, results) => {
         if (err) throw err;
         res.send(results)
     }) 
+
 };
 
 const createPosts = (req, res) => {
